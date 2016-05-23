@@ -10,6 +10,8 @@ public class ConstraintLista {
 	
 	public final /*@ non_null @*/ Constraint err ;
 	
+	/*@ ensures items!=null && items.length == 0 &&
+	  (\forall Constraint c;  c!=null ==> hasItem(c) == false);*/
 	public ConstraintLista(){
 		items = new Constraint[0];
 		err = new Constraint();
@@ -74,17 +76,24 @@ public class ConstraintLista {
 	}//end of reseizeArray
 
 	
-	/*@ requires items != null  && items.length  >=0;
-	   		ensures  (\exists int i; (i >= 0 && i < items.length && 
-	    						  getItem(i) != err && getItem(i).isEqual(it))  ==> \result == true);
-	     	also
-	     	requires items != null  && items.length  >=0;
-	     	ensures (\forall int k; (k >= 0 && k < items.length ) ==> 
-	    						  (getItem(k) == err || !getItem(k).isEqual(it)))  ==> \result == false; 
+	/*@ requires items != null  && items.length  >0 && it != null;
+	   	ensures  (\exists int i; (i >= 0 && i < items.length && 
+	    						  getItem(i) != err &&  getItem(i).isEqual(it))  ==> \result == true);
+	    also
+	    requires items != null  && items.length  >0 && it != null;
+	    ensures (\forall int k; ((k >= 0 && k < items.length ) ==> 
+	    						  (getItem(k) == err || !getItem(k).isEqual(it)))  ==> \result == false);
+		also
+		requires items != null && items.length == 0 ;
+		ensures \result == false;
+		also
+		requires it == null ;
+		ensures \result == false;
 	*/
-	public /*@ pure @*/ boolean hasItem(/*@ non_null @*/Constraint it){
-		boolean res = false;
+	public /*@ pure @*/ boolean hasItem(Constraint it){
 		
+		
+		boolean res = false;
 		if(items != null && items.length >=0 && it != null ){
 			/*@ loop_invariant 
 			 items!= null && it != null && 
