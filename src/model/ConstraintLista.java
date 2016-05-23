@@ -81,8 +81,7 @@ public class ConstraintLista {
 	    						  getItem(i) != err &&  getItem(i).isEqual(it))  ==> \result == true);
 	    also
 	    requires items != null  && items.length  >0 && it != null;
-	    ensures (\forall int k; ((k >= 0 && k < items.length ) ==> 
-	    						  (getItem(k) == err || !getItem(k).isEqual(it)))  ==> \result == false);
+	    ensures (\forall int k; (k >= 0 && k < items.length && (getItem(k) == err || !getItem(k).isEqual(it)) ))  ==> \result == false;
 		also
 		requires items != null && items.length == 0 ;
 		ensures \result == false;
@@ -98,8 +97,8 @@ public class ConstraintLista {
 			/*@ loop_invariant 
 			 items!= null && it != null && 
 		    (\exists int j; (j >= 0 && j <= i && j < items.length && getItem(j) != err 
-		    							&& getItem(j).isEqual(it)&& getItem(j) != null ) ==>
-		     res == true )
+		    							&& getItem(j).isEqual(it)&& getItem(j) != null )) ==>
+		     res == true 
 		     &&
 		      (\forall int j; (j >= 0 && j <= i && j < items.length) ==>
 		       										(getItem(j) == err 	|| !getItem(j).isEqual(it) ) )==>
@@ -110,7 +109,7 @@ public class ConstraintLista {
 				if(i < items.length && i >=0){
 					if(getItem(i)!= err && getItem(i) != null && getItem(i).isEqual(it)){
 						res= true;
-						break;
+						return res;
 					}
 				}//end of if
 				res = false;
