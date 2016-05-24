@@ -16,10 +16,17 @@ public class ConstraintSet {
 	}
 	
 	
-	/*@ ensures \result == list.hasItem(constr);
+	/*@ requires constr != null; 
+	 ensures \result == list.hasItem(constr);
+	 also
+	 requires constr == null;
+	 ensures \result == false;
 	 */
-	public /*@ pure @*/ boolean belongs(/*@ non_null @*/ Constraint constr){
-		return list.hasItem(constr);
+	public /*@ pure @*/ boolean belongs(Constraint constr){
+		if(constr != null)
+			return list.hasItem(constr);
+		else
+			return false;
 	}
 	
 	/* requires (\forall int i; (i >= 0 && i < list.getSize() && (list.getItem(i).isValid() == true)));

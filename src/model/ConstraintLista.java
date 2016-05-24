@@ -78,7 +78,10 @@ public class ConstraintLista {
    	requires items != null  && items.length  >0 && it != null 
    							&& !(\exists int i; (i >= 0 && i < items.length && 
     						    getItem(i).isEqual(it)));
-    ensures \result == false;						  
+    ensures \result == false;
+    also
+    requires !(items != null  && items.length  >0 && it != null);
+    ensures  \result == false; 						    
     */
 	public /*@ pure @*/ boolean hasItem(Constraint it){
 		
