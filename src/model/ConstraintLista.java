@@ -10,30 +10,25 @@ public class ConstraintLista {
 	
 	public final /*@ non_null @*/ Constraint err ;
 	
-	/*@ ensures items!=null && items.length == 0 &&
-	  (\forall Constraint c;  c!=null ==> hasItem(c) == false);*/
+	/* ensures items!=null && items.length == 0 &&
+	  (\forall Constraint c;  c!=null ==> hasItem(c) == false) && err!=null;*/
 	public ConstraintLista(){
 		items = new Constraint[0];
 		err = new Constraint();
 	}
 	
-	/*@ modifies \nothing;  
-    @   requires items != null && id < items.length && id >= 0 
-    		&& items[id] != null && items.length > 0;
- 	@ ensures \result == items[id] && \result != null;
- 	@ also
- 	@ requires  items != null && ( id >= items.length || id < 0 
- 	|| items[id] == null || items.length <= 0);
- 	@ ensures \result == err && \result != null;
- */
-	public /*@ pure non_null@*/ Constraint getItem(int id){
-		if(items.length <= 0){
-			return err;
+	/*@ requires items.length > 0 && id >= 0 && id < items.length && items[id] != null;
+ 	 @ ensures \result == items[id] ;
+ 	 @ also
+ 	 @ requires !(items.length > 0 && id >= 0 && id < items.length && items[id] != null);
+ 	 @ ensures \result == err ;
+ 	 */
+	public /*@ pure non_null @*/ Constraint getItem(int id){
+		
+		if(items.length > 0 && id >= 0 && id < items.length && items[id] != null){
+			return items[id];
 		}else{
-			if(items != null && id < items.length && id >=0 
-					&& items[id] != null && items.length > 0)
-				return items[id];
-			else return err;
+			return err;
 		}
 	}//getItem
 	
@@ -76,49 +71,45 @@ public class ConstraintLista {
 	}//end of reseizeArray
 
 	
-	/*@ requires items != null  && items.length  >0 && it != null;
-	   	ensures  (\exists int i; (i >= 0 && i < items.length && 
-	    						  getItem(i) != err &&  getItem(i).isEqual(it))  ==> \result == true);
-	    also
-	    requires items != null  && items.length  >0 && it != null;
-	    ensures (\forall int k; (k >= 0 && k < items.length && (getItem(k) == err || !getItem(k).isEqual(it)) ))  ==> \result == false;
-		also
-		requires items != null && items.length == 0 ;
-		ensures \result == false;
-		also
-		requires it == null ;
-		ensures \result == false;
-	*/
+	/*@ requires items != null  && items.length  >0 && it != null 
+	  	&& (\exists int i; (i >= 0 && i < items.length && getItem(i).isEqual(it)));
+   	ensures  \result == true;
+   	also
+   	requires items != null  && items.length  >0 && it != null 
+   							&& !(\exists int i; (i >= 0 && i < items.length && 
+    						    getItem(i).isEqual(it)));
+    ensures \result == false;						  
+    */
 	public /*@ pure @*/ boolean hasItem(Constraint it){
 		
 		
-		boolean res = false;
-		if(items != null && items.length >=0 && it != null ){
+		boolean found = false;
+		if(items != null && items.length >0 && it != null ){
 			/*@ loop_invariant 
-			 items!= null && it != null && 
-		    (\exists int j; (j >= 0 && j <= i && j < items.length && getItem(j) != err 
-		    							&& getItem(j).isEqual(it)&& getItem(j) != null )) ==>
-		     res == true 
-		     &&
-		      (\forall int j; (j >= 0 && j <= i && j < items.length) ==>
-		       										(getItem(j) == err 	|| !getItem(j).isEqual(it) ) )==>
-		     res == false ;
-		   decreasing items.length-i;
-			  */
+			 items!= null && it != null && i <= items.length && i >=0 && items.length >= 0 &&
+		    	( (\exists int j; (j >= 0 && j < i && j < items.length   
+		    				  && getItem(j)!=null && getItem(j).isEqual(it))) ==>
+		     found == true ) &&
+		     ( !(\exists int j; (j >= 0 && j < i && j < items.length   
+		    				  && getItem(j)!=null && getItem(j).isEqual(it))) ==>
+		     found == false );
+		     decreasing items.length-i;
+			*/
 			for(int i = 0; i < items.length; i++){
 				if(i < items.length && i >=0){
-					if(getItem(i)!= err && getItem(i) != null && getItem(i).isEqual(it)){
-						res= true;
-						return res;
-					}
+					//if(getItem(i) != null && getItem(i).isEqual(it)){
+						if( getItem(i)!=null && getItem(i).isEqual(it)){
+							found = true;
+							//return res;
+						}
+					//}
 				}//end of if
-				res = false;
+				//res = false;
 			 }//end of for loop
-			res = false;
+			
 		}
-		return res;
-	}
-	
+		return found;
+	}	
 
 	/*@ requires it != null &&  pos >= 0 && pos < items.length;
 			ensures getItem(pos) == it;

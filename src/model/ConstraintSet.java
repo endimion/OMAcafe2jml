@@ -22,8 +22,8 @@ public class ConstraintSet {
 		return list.hasItem(constr);
 	}
 	
-	/*@ requires (\forall int i; (i >= 0 && i < list.getSize() ) ==> list.getItem(i).isValid() == true);
-	 	ensures \result == true ;
+	/* requires (\forall int i; (i >= 0 && i < list.getSize() && (list.getItem(i).isValid() == true)));
+	  	 	ensures \result == true ;
  	*/
 	public /*@ pure @*/ boolean isValidSet(){
 		boolean res = true;
@@ -41,7 +41,7 @@ public class ConstraintSet {
 			
 			if(!list.getItem(i).isValid()){
 				res= false;
-				break;
+				return res;
 			}
 			res = true;
 		}//end of for loop

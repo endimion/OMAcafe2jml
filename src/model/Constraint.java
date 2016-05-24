@@ -27,14 +27,21 @@ public class Constraint {
 		this.the_count = -1;
 	}
 	
-	/* @ ensures \result == (this.isCount() == c.isCount() && this.isDate() == c.isDate()
+	/*@ requires c != null; 
+	ensures \result == (this.isCount() == c.isCount() && this.isDate() == c.isDate()
 	&& this.isInit() == c.isInit() && this.isValid() == c.isValid() && this.getCount() == c.getCount()
-	&& this.getDate() == c.getDate()); 
+	&& this.getDate() == c.getDate());
+	also
+	requires c == null;
+	ensures \result == false; 
 	*/
-	public /*@ pure @*/ boolean isEqual(/*@ non_null@*/ Constraint c){
+	public /*@ pure @*/ boolean isEqual(Constraint c){
+		if(c!= null)
 		return this.isCount() == c.isCount() && this.isDate() == c.isDate()
 				&& this.isInit() == c.isInit() && this.isValid() == c.isValid() && this.getCount() == c.getCount()
 				&& this.getDate() == c.getDate();
+		else
+			return false;
 	}
 	
 	/*@ ensures \result == this.isValid;
