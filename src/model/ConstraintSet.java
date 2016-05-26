@@ -3,9 +3,10 @@ package model;
 public class ConstraintSet {
 	
 	
-	private  final /*@ spec_public non_null @*/  ConstraintLista list;
+	private  final /*@ spec_public non_null @*/  ConstraintLista list  ;
 	
-	
+	/* public invariant list != null;
+	 */ 
 	
 	/* ensures isValidSet() == true ;
 		also
@@ -29,49 +30,62 @@ public class ConstraintSet {
 			return false;
 	}
 	
-	/* requires (\forall int i; (i >= 0 && i < list.getSize() && (list.getItem(i).isValid() == true)));
-	  	 	ensures \result == true ;
+	/*@ requires (\exists int i; (i >= 0 && i < list.getSize()); 
+		    list.getItem(i).isValid() == false );
+	  	ensures \result == false ;
+	  	also
+	    requires !(\exists int i; (i >= 0 && i < list.getSize()); 
+		    list.getItem(i).isValid() == false );
+	  	ensures \result == true ;
  	*/
 	public /*@ pure @*/ boolean isValidSet(){
 		boolean res = true;
 		
-		/*@ loop_invariant list!= null ==> 
-	    (\exists int j; (j >= 0 && j <= i 
-		    && list.getItem(j).isValid() == false) ==>
-		     res == false ) && 
-		(\forall int j; (j >= 0 && j <= i && j < list.getSize()) ==>
-		     (list.getItem(i).isValid())==>
+		/*@ loop_invariant list!= null && i <= list.getSize() && i >=0 &&
+	     ( (\exists int j; (j >= 0 && j < i); 
+		    list.getItem(j).isValid() == false ) ==>
+		     res == false ) &&
+		     ( !(\exists int j; (j >= 0 && j < i); 
+		    list.getItem(j).isValid() == false ) ==>
 		     res == true );
 	   decreasing list.getSize()-i;
 		  */
 		for(int i = 0; i < list.getSize(); i++){
-			
 			if(!list.getItem(i).isValid()){
 				res= false;
 				return res;
 			}
-			res = true;
 		}//end of for loop
-		
-		
 		return res;
-	
-	
 	}
 	
 	
 
-	/* ensures 
-	(\forall  Constraint Constr2;
-	@ belongs(Constr2 ) == \old((isEqual(Constr, Constr2)  ||  belongs(Constr2)))));
-	@ also
+	/*
+	 * @ also
 	@ ensures 
 	@( \old((isValidSet()  &&  Constr.isValid())) ==> 
 	@ isValidSet() == true);
-	@ also
-	@*/
-	public void add(Constraint Constr){
+
 	
+	 */
+	
+	
+	/*@	requires constr.isValid();  
+	 ensures (\forall  Constraint constr2; constr2 != null && constr.isEqual(constr2) 
+	 			==> belongs(constr2) == true );
+	 also
+	 requires constr.isValid();
+	 ensures (\forall  Constraint constr2; constr2 != null && !constr.isEqual(constr2) 
+	 			==> belongs(constr2) == \old(belongs(constr2)));
+	 also
+	 requires isValidSet() && constr != null && constr.isValid();
+	 ensures  constr.isValid() ==> isValidSet() == true;		
+	*/
+	public void add(/*@ non_null */ Constraint constr){
+		if(constr != null && constr.isValid()){
+			list.add(constr);
+		}
 		
 		
 	}
