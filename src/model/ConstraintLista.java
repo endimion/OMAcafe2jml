@@ -52,6 +52,9 @@ public class ConstraintLista {
 		@ requires items != null  && items.length  >=0 && size > items.length && size > 0;
 		@ ensures (\forall int j; j >=0 && j < \old(items.length); items[j] == \old(items[j]) );
 		@ assignable items;
+		@ also
+		@ requires !(items != null  && items.length  >=0 && size > items.length && size > 0);
+		@ assignable \nothing;
 	 */
 	public  void resizeArray( int size){
 
@@ -120,6 +123,9 @@ public class ConstraintLista {
 	/*@ requires it != null &&  pos >= 0 && pos < items.length;
 			ensures getItem(pos) == it;
 			assignable items[pos];
+			also
+			requires it != null &&  pos >= 0 && pos < items.length;
+			ensures getSize() == \old(getSize());
 			also  
 			requires !(it != null &&  pos >= 0 && pos < items.length);
 			assignable \nothing;
@@ -143,7 +149,9 @@ public class ConstraintLista {
 	 		 also
 	 		 requires   pos >= 0 && pos < getSize() && getSize() >0 ;
 	 		 ensures \old(getSize()) == getSize();
-	 		 
+	 		 also
+	 		 requires !(pos >=0 && getSize() > 0);
+	 		 assignable \nothing; 
 	 */
 	public void setItem(int pos, /*@ non_null @*/ Constraint it){
 		if( items != null  && items.length  >0 && pos >= items.length && pos > 0){
