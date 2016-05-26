@@ -126,11 +126,12 @@ public class ConstraintLista {
 			also
 			requires it != null &&  pos >= 0 && pos < items.length;
 			ensures getSize() == \old(getSize());
+			assignable items[pos];
 			also  
 			requires !(it != null &&  pos >= 0 && pos < items.length);
 			assignable \nothing;
 	 */
-	public void assign(/*@ non_null@*/ Constraint it, int pos){
+	public void assign(/*@ non_null @*/ Constraint it, int pos){
 		if(it != null && pos >=0 && pos < items.length){
 			items[pos] = it;
 		}
@@ -149,6 +150,7 @@ public class ConstraintLista {
 	 		 also
 	 		 requires   pos >= 0 && pos < getSize() && getSize() >0 ;
 	 		 ensures \old(getSize()) == getSize();
+	 		 assignable items[pos];
 	 		 also
 	 		 requires !(pos >=0 && getSize() > 0);
 	 		 assignable \nothing; 
